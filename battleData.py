@@ -109,7 +109,6 @@ itens = { #dicionario com todos os itens e suas eficacias contra os inimigos
         "Cárie": 0.5, "Bactéria do Pé": 1
     })
 }
-<<<<<<< HEAD
 
 enemy_spritesheets = {
     "Cárie": "img/carie_spritesheet.png",
@@ -165,5 +164,3 @@ enemy_animations = {
               (0, 256), (64, 256), (128, 256), (192, 256), (256, 256), (320, 256),
               (0, 320), (64, 320), (128, 320), (192, 320), (256, 320), (320, 320),]
 }
-=======
->>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81

@@ -2,11 +2,7 @@ import pygame
 from config import *
 from sprites import *
 import sys
-<<<<<<< HEAD
 from battleData import *
-=======
-from battleData import itens, enemies
->>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
 import random
 
 pygame.display.set_caption("LimpAttack") #define o titulo da janela do jogo
@@ -25,17 +21,11 @@ class Game: #classe principal que gerencia o estado geral do jogo
 
         self.character_spritesheet = Spritesheet('img/character.png')
         self.terrain_spritesheet = Spritesheet('img/terrain1.png')
-<<<<<<< HEAD
         self.tree_spritesheet = Spritesheet('img/tree_Mid.png')
 
         self.random_enemy_name = random.choice(list(enemies.keys()))
         self.enemy_spritesheet = Spritesheet(enemy_spritesheets[self.random_enemy_name])
 
-=======
-        self.enemy_spritesheet = Spritesheet('img/enemy1.png')
-        self.tree_spritesheet = Spritesheet('img/tree_Mid.png')
-
->>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
         self.in_battle = False
         self.battle_started = False
         self.battle_enemy = None
@@ -46,28 +36,16 @@ class Game: #classe principal que gerencia o estado geral do jogo
         self.inimigos_aviso_exibido = False
         self.trocando_mapa = False
 
-<<<<<<< HEAD
     def handle_battle(self): #gerencia a batalha entre o jogador e o inimigo
         enemy_name = self.battle_enemy.enemy_name
-=======
-    def handle_battle(self): #logica principal da batalha por turnos entre jogador e inimigo
-        enemy_name = random.choice(list(enemies.keys())) #escolhe inimigo aleatorio para a batalha
->>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
         enemy = enemies[enemy_name]
         current_enemy_hp = enemy.hp
         print(f"\n⚔️ BATALHA CONTRA {enemy.nome.upper()} COMEÇOU!")
 
-<<<<<<< HEAD
         while self.in_battle:
             print(f"\n🦊 HP da Raposa: {self.fox_hp:.0f} | 👾 HP do {enemy.nome}: {current_enemy_hp:.0f}")
 
             if self.battle_turn == "fox":
-=======
-        while self.in_battle: #laco principal da batalha enquanto ela estiver ativa
-            print(f"\n🦊 HP da Raposa: {self.fox_hp:.0f} | 👾 HP do {enemy.nome}: {current_enemy_hp:.0f}")
-
-            if self.battle_turn == "fox": #turno do jogador para escolher item e causar dano
->>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
                 print("É o seu turno! Escolha um item:")
                 for i, item in enumerate(itens.keys()):
                     print(f"[{i+1}] {item}")
@@ -93,11 +71,7 @@ class Game: #classe principal que gerencia o estado geral do jogo
                 else:
                     self.battle_turn = "enemy"
 
-<<<<<<< HEAD
             elif self.battle_turn == "enemy":
-=======
-            elif self.battle_turn == "enemy": #turno do inimigo para atacar
->>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
                 ataque_nome, dano = enemy.ataque_aleatorio()
                 self.fox_hp -= dano
                 print(f"💢 {enemy.nome} usou '{ataque_nome}'! Dano recebido: {dano:.0f}")
@@ -118,14 +92,11 @@ class Game: #classe principal que gerencia o estado geral do jogo
 
         self.createTiledmap()
 
-<<<<<<< HEAD
         # Inicializa a câmera com o tamanho do mapa
         map_width = len(mapa_atual[0]) * TILESIZE
         map_height = len(mapa_atual) * TILESIZE
         self.camera = Camera(map_width, map_height)
 
-=======
->>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
     def createTiledmap(self): #percorre o mapa atual e instancia os objetos baseados nos simbolos
         for i, row in enumerate(mapa_atual): #verifica o tipo de objeto para criar (ex: jogador, inimigo, arvore etc.)
             for j, column in enumerate(row):
@@ -138,11 +109,7 @@ class Game: #classe principal que gerencia o estado geral do jogo
                     else:
                         self.player = Player(self, j, i)
                 if column == "E" and fases[mapa_atual_index]:
-<<<<<<< HEAD
                     self.battle_enemy = Enemy(self, j, i, self.random_enemy_name)
-=======
-                    enemy = Enemy(self, j, i)
->>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
                 if column == "t":
                     Tree1(self, j, i)
                 if column == "T":
@@ -188,18 +155,12 @@ class Game: #classe principal que gerencia o estado geral do jogo
 
     def update(self): #atualiza todos os sprites e verifica eventos como abertura de portal
         self.all_sprites.update()
-<<<<<<< HEAD
 
         if len(self.enemy) == 0:
-=======
-        
-        if len(self.enemy) == 0: #se todos inimigos foram derrotados, substitui portal fechado por aberto
->>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
             for sprite in self.blocks:
                 if isinstance(sprite, ClosedPortal):
                     sprite.kill()
                     Portal(self, sprite.rect.x // TILESIZE, sprite.rect.y // TILESIZE)
-<<<<<<< HEAD
 
         if self.verificar_portal():
             print("🔄 Jogador colidiu com um portal.")
@@ -207,12 +168,6 @@ class Game: #classe principal que gerencia o estado geral do jogo
         # Atualiza a câmera com base na posição do jogador
         self.camera.update(self.player)
 
-=======
-        
-        if self.verificar_portal(): #checa se jogador entrou no portal
-            print("🔄 Jogador colidiu com um portal.")
-
->>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
     def trocar_mapa(self, direcao="proximo"): #muda o mapa atual com base na direcao escolhida
         global mapa_atual_index, mapa_atual
 
@@ -237,12 +192,8 @@ class Game: #classe principal que gerencia o estado geral do jogo
 
     def draw(self): #desenha os sprites e atualiza a tela
         self.screen.fill(BLACK)
-<<<<<<< HEAD
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
-=======
-        self.all_sprites.draw(self.screen)
->>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
         self.clock.tick(FPS)
         pygame.display.update()
     
