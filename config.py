@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 WIN_WIDTH = 640 #largura da janela
 WIN_HEIGHT = 480 #altura da janela
+=======
+WIN_WIDTH = 1280 #largura da janela
+WIN_HEIGHT = 960 #altura da janela
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
 TILESIZE = 32 #tamanho de cada tile
 FPS = 30 #taxa de frames por segundo
 
@@ -7,13 +12,21 @@ PLAYER_LAYER = 3 #camada do jogador
 BLOCK_LAYER = 2 #camada dos blocos
 GROUND_LAYER = 1 #camada do chao
 
+<<<<<<< HEAD
 PLAYER_SPEED = 5 #velocidade do jogador
+=======
+PLAYER_SPEED = 20 #velocidade do jogador
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
 
 RED = (255,0,0)
 BLACK = (0,0,0)
 BLUE = (0,0,255)
 CHARACTER_BG = (184, 200, 168)
+<<<<<<< HEAD
 ENEYMY_BG = (0, 0, 0)
+=======
+ENEYMY_BG = (48, 48, 48)
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
 TERRAIN_BG = (0, 0, 0)
 
 fases =  [True, True, True, True, True, True] #estado de ativacao das fases (true = inimigos presentes)
@@ -53,7 +66,11 @@ tilemap1 = [ #casa inicial
 
 tilemap2 = [ #cidade principal
     'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT',
+<<<<<<< HEAD
     'pP..............E......................p',
+=======
+    'pP.....................................p',
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
     't......................................t',
     'M...BBB................................M',
     'M......................................M',
@@ -88,14 +105,22 @@ tilemap3 = [ #lojinha
     'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT',
     'pP.....................................p',
     't......................................t',
+<<<<<<< HEAD
     'M...BBB.....................E..........M',
+=======
+    'M...BBB................................M',
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
     'M......................................M',
     'M......................................M',
     'M......................................M',
     'M..............B.......................M',
     'M......................................M',
     'M.....BBB..............................M',
+<<<<<<< HEAD
     'M.......B..................E...........M',
+=======
+    'M.......B..............................M',
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
     'M..E....B..............................M',
     'M......................................M',
     'MB.....................................M',

@@ -1,6 +1,9 @@
 import pygame
 from config import *
+<<<<<<< HEAD
 from battleData import *
+=======
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
 import math
 import random
 
@@ -57,12 +60,20 @@ class Player(pygame.sprite.Sprite): #gerencia movimento colisao e animacao do pl
 
         self.rect.x += self.x_change
         self.collide_blocks('x')
+<<<<<<< HEAD
         self.rect.y += self.y_change
         self.collide_blocks('y')
+=======
+        self.collide_enemy('x')
+        self.rect.y += self.y_change
+        self.collide_blocks('y')
+        self.collide_enemy('y')
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
 
         self.x_change = 0
         self.y_change = 0
 
+<<<<<<< HEAD
         # Verifica proximidade de inimigo para iniciar batalha
         self.check_enemy_proximity()
 
@@ -79,6 +90,8 @@ class Player(pygame.sprite.Sprite): #gerencia movimento colisao e animacao do pl
                 self.game.handle_battle()
                 break
 
+=======
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
     def grid_movement(self): #gerencia a movimentacao do player por tile no grid
         if self.game.in_battle:
             return
@@ -144,6 +157,30 @@ class Player(pygame.sprite.Sprite): #gerencia movimento colisao e animacao do pl
                 if self.y_change < 0:
                     self.rect.y = hits[0].rect.bottom
 
+<<<<<<< HEAD
+=======
+    def collide_enemy(self, direction): #impede o player de atravessar enemy
+        if direction == "x":
+            hits = pygame.sprite.spritecollide(self, self.game.enemy, False)
+            if hits:
+                if self.x_change > 0:
+                    self.rect.x = hits[0].rect.left - self.rect.width
+                    print("não me teste!!!!")
+                if self.x_change < 0:
+                    self.rect.x = hits[0].rect.right
+                    print("vou acabar com tua raça!!!!")
+
+        if direction == "y":
+            hits = pygame.sprite.spritecollide(self, self.game.enemy, False)
+            if hits:
+                if self.y_change > 0:
+                    self.rect.y = hits[0].rect.top - self.rect.height
+                    print("sai daqui!!!!")
+                if self.y_change < 0:
+                    self.rect.y = hits[0].rect.bottom
+                    print("você não é páreo!!!!")
+    
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
     def animation(self): #seleciona a sprites de acordo com direcao e movimento
         bg_colors = [CHARACTER_BG, ENEYMY_BG, TERRAIN_BG]
         down_animations = [self.game.character_spritesheet.get_sprite(1, 1, self.width, self.height, bg_colors),
@@ -198,17 +235,26 @@ class Player(pygame.sprite.Sprite): #gerencia movimento colisao e animacao do pl
                 if self.animation_loop >= 3:
                     self.animation_loop = 1
 
+<<<<<<< HEAD
 class Enemy(pygame.sprite.Sprite):  # Inimigo com animação contínua
     def __init__(self, game, x, y, enemy_name):
         bg_colors = [CHARACTER_BG, ENEYMY_BG, TERRAIN_BG]
         self.game = game
         self.enemy_name = enemy_name
+=======
+class Enemy(pygame.sprite.Sprite): #enemy com movimento automatico e inicio de batalha
+    enemy_counter = 0
+
+    def __init__(self, game, x, y): #inicializa enemy com sprite e posicao no mapa
+        self.game = game
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
         self._layer = PLAYER_LAYER
         self.groups = self.game.all_sprites, self.game.enemy
         pygame.sprite.Sprite.__init__(self, self.groups)
 
         self.x = x * TILESIZE
         self.y = y * TILESIZE
+<<<<<<< HEAD
         self.width = 64
         self.height = 64
 
@@ -221,10 +267,19 @@ class Enemy(pygame.sprite.Sprite):  # Inimigo com animação contínua
 
         # Define a imagem inicial
         self.image = self.spritesheet.get_sprite(0, 0, self.width, self.height, bg_colors)
+=======
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        bg_colors = [CHARACTER_BG, ENEYMY_BG, TERRAIN_BG]
+        self.image = self.game.enemy_spritesheet.get_sprite(0, 0, self.width, self.height, bg_colors)
+
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
 
+<<<<<<< HEAD
     def update(self):
         self.animate()
         self.random_movement()
@@ -252,6 +307,52 @@ class Enemy(pygame.sprite.Sprite):  # Inimigo com animação contínua
                not any(next_rect.colliderect(enemy.rect) for enemy in self.game.enemy if enemy != self):
                 self.rect.x += dx
                 self.rect.y += dy
+=======
+    def update(self): #se move e verifica proximidade com jogador
+        if hasattr(self.game, "player"):
+            player_tile_x = self.game.player.rect.x // TILESIZE
+            player_tile_y = self.game.player.rect.y // TILESIZE
+            enemy_tile_x = self.rect.x // TILESIZE
+            enemy_tile_y = self.rect.y // TILESIZE
+
+            if abs(player_tile_x - enemy_tile_x) <= 1 and abs(player_tile_y - enemy_tile_y) <= 1:
+                if not self.game.battle_started:
+                    self.game.in_battle = True
+                    self.game.battle_started = True
+                    self.game.battle_enemy = self
+                    print("⚔️ BATALHA INICIADA!")
+                    self.game.handle_battle()
+                return
+
+        if self.game.in_battle:
+            return
+
+        self.game.battle_turn = "fox"
+        self.game.fox_hp = 100
+        self.game.bacteria_hp = 5
+
+        if not hasattr(self, 'move_timer'):
+            self.move_timer = 0
+        self.move_timer += 1
+
+        if self.move_timer < 30: #espera 30 frames antes de mover novamente
+            return
+        self.move_timer = 0
+
+        directions = [(0, -TILESIZE), (0, TILESIZE), (-TILESIZE, 0), (TILESIZE, 0)]
+        dx, dy = random.choice(directions)
+
+        next_rect = self.rect.copy()
+        next_rect.x += dx
+        next_rect.y += dy
+
+        will_collide = any(next_rect.colliderect(block.rect) for block in self.game.blocks) or \
+                       any(next_rect.colliderect(enemy.rect) for enemy in self.game.enemy if enemy != self)
+
+        if not will_collide: #move o inimigo se nao houver colisao
+            self.rect.x += dx
+            self.rect.y += dy
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
 
 class Block(pygame.sprite.Sprite): #bloco solido que impede passagem
     def __init__(self, game, x, y): #inicializa bloco com sprite e posicao
@@ -386,6 +487,7 @@ class Ground(pygame.sprite.Sprite): #chao do mapa
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
+<<<<<<< HEAD
         self.rect.y = self.y
 
 class Camera:
@@ -408,3 +510,6 @@ class Camera:
         y = max(-(self.height - WIN_HEIGHT), y)
 
         self.camera = pygame.Rect(x, y, self.width, self.height)
+=======
+        self.rect.y = self.y
+>>>>>>> a6edd265751faffe7dccf29f19896e1ff2aeeb81
