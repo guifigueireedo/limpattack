@@ -40,6 +40,7 @@ class Game:
         self.character_spritesheet = Spritesheet('img/character.png')
         self.terrain_spritesheet = Spritesheet('img/terrain1.png')
         self.tree_spritesheet = Spritesheet('img/tree_Mid.png')
+        self.sabonete_spritesheet = Spritesheet('img/sabonete.png')
         self.in_battle = False
         self.battle_started = False
         self.battle_enemy = None
@@ -63,6 +64,7 @@ class Game:
         self.mapa_atual = mapas[self.mapa_atual_index]["tilemap"]
         self.fases = [True] * len(mapas)
         self.mapas_visitados = [False] * len(mapas)
+        self.sabonete_spawned = False
 
     def handle_battle(self):
         enemy_battle_images = {
@@ -194,11 +196,12 @@ class Game:
         self.all_sprites.update()
         if not self.npc_dialog_active and self.player is not None:
             for sprite in self.all_sprites:
-                # Lógica para todos NPCs, exceto NPC3 (deixe NPC3 controlar seu próprio diálogo)
-                if hasattr(sprite, 'symbol') and sprite.symbol in ['X', 'Y'] and self.player.rect.colliderect(sprite.rect):
+                if hasattr(sprite, 'symbol') and sprite.symbol in npcs_data and self.player.rect.colliderect(sprite.rect):
+                    print(f"DEBUG: Colisão detectada com NPC símbolo={sprite.symbol}")
                     npc_symbol = sprite.symbol
                     npc_info = npcs_data.get(npc_symbol)
-                    if npc_info:
+                    if npc_info and "dialogos" in npc_info:
+                        print(f"DEBUG: Diálogo encontrado para NPC símbolo={npc_symbol}")
                         self.npc_dialog_active = True
                         self.npc_dialog_texts = npc_info["dialogos"]
                         self.npc_dialog_index = 0
@@ -208,7 +211,9 @@ class Game:
                         self.npc_dialog_npc_symbol = npc_symbol
                         if hasattr(self.player, "moving"):
                             self.player.moving = False
-                    break
+                    else:
+                        print(f"DEBUG: Nenhum diálogo encontrado para NPC símbolo={npc_symbol}")
+                break
         if self.npc_dialog_active:
             self.draw_npc_dialog()
         if len(self.enemy) == 0:
@@ -315,8 +320,8 @@ class Game:
                 inventario_dict[item.nome]["quantidade"] += 1
         imagens = {
             "Curativo": "img/curativo.png",
-            "Comprimido": "img/comprimido.png",
             "Pomada": "img/pomada.png",
+            "Xarope": "img/xarope.png",
             "Chá Natural": "img/cha.png"
         }
         font = pygame.font.SysFont("arial", 18)
@@ -327,11 +332,10 @@ class Game:
             sprite = HudItemCuraSprite(hud_x + i*48, hud_y, img_path, data["quantidade"])
             sprite.draw(self.screen, font)
         if hasattr(self, 'inventario_chave') and 'sabonete' in self.inventario_chave:
-            sabonete_img = pygame.image.load("img/curativo.png").convert_alpha()
-            sabonete_img = pygame.transform.scale(sabonete_img, (32, 32))
-            self.screen.blit(sabonete_img, (hud_x, hud_y + 54))
-            font2 = pygame.font.SysFont("arial", 16, bold=True)
-            self.screen.blit(font2.render("Sabonete (chave)", True, (0,0,0)), (hud_x + 40, hud_y + 60))
+            sabonete_sprite = HudItemCuraSprite(hud_x, hud_y + 54, "img/sabonete.png", 1)
+            sabonete_sprite.draw(self.screen, font)
+            font2 = pygame.font.SysFont("arial", 16)
+            self.screen.blit(font2.render("Sabonete", True, (255,255,255)), (hud_x + 40, hud_y + 60))
 
     def draw_npc_dialog(self):
         dialog_box_rect = pygame.Rect(40, WIN_HEIGHT - 120, WIN_WIDTH - 80, 80)

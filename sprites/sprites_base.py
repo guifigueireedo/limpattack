@@ -65,14 +65,12 @@ class Player(pygame.sprite.Sprite):
         self.x_change = 0
         self.y_change = 0
         for item in pygame.sprite.spritecollide(self, self.game.all_sprites, False):
-            # Persistência de itens coletados
             if hasattr(self.game, 'mapa1_state'):
                 if item.__class__.__name__ == 'Sabonete':
                     if 'sabonete' not in self.game.inventario_chave:
                         self.game.inventario_chave.append('sabonete')
                         item.kill()
                         self.game.mapa1_state['sabonete_coletado'] = True
-                # Itens de cura: registra por posição
                 if item.__class__.__name__ == 'ItemCuraSprite':
                     pos = (item.rect.x // TILESIZE, item.rect.y // TILESIZE)
                     if not hasattr(self.game, 'itens_cura_coletados'):
@@ -118,28 +116,26 @@ class Player(pygame.sprite.Sprite):
                 next_rect.y += dy
                 npc_hit = None
                 for npc in self.game.all_sprites:
-                    if (isinstance(npc, NPC) or isinstance(npc, NPC2) or npc.__class__.__name__ == 'NPC3') and next_rect.colliderect(npc.rect):
+                    if npc.__class__.__name__ in ['NPC', 'NPC2', 'NPC3', 'NPC4'] and next_rect.colliderect(npc.rect):
                         npc_hit = npc
                         break
                 if npc_hit and not self.game.npc_dialog_active:
                     npc_symbol = npc_hit.symbol if hasattr(npc_hit, "symbol") else None
-                    # Lógica especial para NPC3
-                    if npc_symbol == '3':
+                    if npc_symbol == 'C':  # <-- troque '3' por 'C'
                         if hasattr(self.game, 'inventario_chave') and 'sabonete' in self.game.inventario_chave and getattr(npc_hit, 'estado', None) == 'bloqueando':
                             npc_hit.estado = 'livre'
                             self.game.npc_dialog_active = True
-                            self.game.npc_dialog_texts = npcs_data['3']['dialogos_entrega']
+                            self.game.npc_dialog_texts = npcs_data['C']['dialogos_entrega']
                             self.game.npc_dialog_index = 0
                             self.game.npc_dialog_current = ""
                             self.game.npc_dialog_char_index = 0
                             self.game.npc_dialog_last_update = pygame.time.get_ticks()
-                            self.game.npc_dialog_npc_symbol = '3'
+                            self.game.npc_dialog_npc_symbol = 'C'
                             if not getattr(npc_hit, 'moved', False):
                                 npc_hit.remove(self.game.blocks)
                                 npc_hit.rect.x += TILESIZE
                                 npc_hit.rect.y -= TILESIZE
                                 npc_hit.moved = True
-                            # Remove sabonete do inventário e salva estado
                             if hasattr(self.game, 'mapa1_state'):
                                 if 'sabonete' in self.game.inventario_chave:
                                     self.game.inventario_chave.remove('sabonete')
@@ -150,29 +146,43 @@ class Player(pygame.sprite.Sprite):
                             return
                         elif getattr(npc_hit, 'estado', None) == 'bloqueando':
                             self.game.npc_dialog_active = True
-                            self.game.npc_dialog_texts = npcs_data['3']['dialogos_bloqueando']
+                            self.game.npc_dialog_texts = npcs_data['C']['dialogos_bloqueando']
                             self.game.npc_dialog_index = 0
                             self.game.npc_dialog_current = ""
                             self.game.npc_dialog_char_index = 0
                             self.game.npc_dialog_last_update = pygame.time.get_ticks()
-                            self.game.npc_dialog_npc_symbol = '3'
+                            self.game.npc_dialog_npc_symbol = 'C'
                             self.moving = False
+
+                            if not self.game.sabonete_spawned:
+                                print("DEBUG: Tentando criar sabonete...")
+                                Sabonete(self.game, 19, 2)
+                                self.game.sabonete_spawned = True
+                                print("DEBUG: Sabonete spawnado!")
                             return
                         elif getattr(npc_hit, 'estado', None) == 'livre':
                             self.game.npc_dialog_active = True
-                            self.game.npc_dialog_texts = npcs_data['3']['dialogos_livre']
+                            self.game.npc_dialog_texts = npcs_data['C']['dialogos_livre']
                             self.game.npc_dialog_index = 0
                             self.game.npc_dialog_current = ""
                             self.game.npc_dialog_char_index = 0
                             self.game.npc_dialog_last_update = pygame.time.get_ticks()
-                            self.game.npc_dialog_npc_symbol = '3'
+                            self.game.npc_dialog_npc_symbol = 'C'
                             self.moving = False
                             return
-                    # Lógica padrão para outros NPCs
                     npc_info = npcs_data.get(npc_symbol)
                     if npc_info:
                         self.game.npc_dialog_active = True
-                        self.game.npc_dialog_texts = npc_info["dialogos"]
+                        if "dialogos" in npc_info:
+                            self.game.npc_dialog_texts = npc_info["dialogos"]
+                        elif "dialogos_bloqueando" in npc_info:
+                            self.game.npc_dialog_texts = npc_info["dialogos_bloqueando"]
+                        elif "dialogos_entrega" in npc_info:
+                            self.game.npc_dialog_texts = npc_info["dialogos_entrega"]
+                        elif "dialogos_livre" in npc_info:
+                            self.game.npc_dialog_texts = npc_info["dialogos_livre"]
+                        else:
+                            self.game.npc_dialog_texts = ["..."]
                         self.game.npc_dialog_index = 0
                         self.game.npc_dialog_current = ""
                         self.game.npc_dialog_char_index = 0
@@ -436,24 +446,27 @@ class ItemCuraSprite(pygame.sprite.Sprite):
         self.item_cura = item_cura
         imagens = {
             "Curativo": "img/curativo.png",
-            "Comprimido": "img/comprimido.png",
             "Pomada": "img/pomada.png",
+            "Xarope": "img/xarope.png",
             "Chá Natural": "img/cha.png"
         }
         img_path = imagens.get(item_cura.nome, "img/curativo.png")
-        self.image = pygame.image.load(img_path).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
-        self.rect = self.image.get_rect()
+        self.spritesheet = Spritesheet(img_path)
+        bg_colors = [CHARACTER_BG]
+        self.image = self.spritesheet.get_sprite(0, 0, 32, 32, bg_colors)
+        self.rect = self.image.get_rect(topleft=(10, 10))
         self.rect.x = self.x
         self.rect.y = self.y
 
 class HudItemCuraSprite(pygame.sprite.Sprite):
     def __init__(self, hud_x, hud_y, img_path, quantidade):
         super().__init__()
-        self.image = pygame.image.load(img_path).convert_alpha()
-        self.image = pygame.transform.scale(self.image, (32, 32))
+        bg_colors = [CHARACTER_BG]
+        spritesheet = Spritesheet(img_path)
+        self.image = spritesheet.get_sprite(0, 0, 32, 32, bg_colors)
         self.rect = self.image.get_rect(topleft=(hud_x, hud_y))
         self.quantidade = quantidade
+
     def draw(self, surface, font):
         surface.blit(self.image, self.rect)
         qtd_surface = font.render(f"x{self.quantidade}", True, (255,255,255))
@@ -508,3 +521,19 @@ class Camera:
         x = max(-(self.width - WIN_WIDTH), x)
         y = max(-(self.height - WIN_HEIGHT), y)
         self.camera = pygame.Rect(x, y, self.width, self.height)
+
+class Sabonete(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = BLOCK_LAYER
+        self.groups = self.game.all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+        bg_colors = [CHARACTER_BG, ENEYMY_BG, TERRAIN_BG]
+        self.image = self.game.sabonete_spritesheet.get_sprite(0, 0, self.width, self.height, bg_colors)
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y

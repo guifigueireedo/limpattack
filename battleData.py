@@ -148,8 +148,8 @@ itens = {
 
 itens_cura = [
     ItemCura("Curativo", 15, 1),
-    ItemCura("Comprimido", 30, 2),
-    ItemCura("Pomada", 60, 3),
+    ItemCura("Pomada", 30, 2),
+    ItemCura("Xarope", 60, 3),
     ItemCura("Chá Natural", 100, 4)
 ]
 

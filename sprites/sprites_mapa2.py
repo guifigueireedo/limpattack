@@ -25,7 +25,7 @@ tilemap = [
     'M..,.................Q.............Q...M',
     'M..,.................Q.............Q...M',
     'M..,.................Q......U......Q...M',
-    'M..,.................Q.............Q...M',
+    'M..,................1Q.............Q...M',
     'M..,...............................Q...M',
     'M..,.................Q......O...U..Q...M',
     'M..,.................Q.............Q...M',
@@ -46,6 +46,7 @@ def create_tiled_map(game, mapa_atual_index, mapas_visitados, fases, enemies, it
                 Ground2(game, j, i)
             if column == "N":
                 game.player = Player(game, j, i)
+                Ground2(game, j, i)
             if column == "E" and fases[mapa_atual_index]:
                 enemy_name = random.choice(list(enemies.keys()))
                 game.battle_enemy = Enemy(game, j, i, enemy_name)
@@ -74,6 +75,8 @@ def create_tiled_map(game, mapa_atual_index, mapas_visitados, fases, enemies, it
             if column == "U":
                 item_cura = random.choices(itens_cura, weights=[60, 30, 8, 2])[0]
                 ItemCuraSprite(game, j, i, item_cura)
+            if column == "1":
+                NPC4(game, j, i, symbol="D")
     mapas_visitados[mapa_atual_index] = True
 
 class House2(pygame.sprite.Sprite):
@@ -168,6 +171,23 @@ class Flores(pygame.sprite.Sprite):
         self.height = TILESIZE
         bg_colors = [CHARACTER_BG, ENEYMY_BG, TERRAIN_BG]
         self.image = self.game.terrain_spritesheet.get_sprite(1100, 2574, self.width, self.height, bg_colors)
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+class NPC4(pygame.sprite.Sprite):
+    def __init__(self, game, x, y, symbol="Y"):
+        self.game = game
+        self.symbol = symbol
+        self._layer = BLOCK_LAYER
+        self.groups = self.game.all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+        self.image = pygame.Surface((self.width, self.height))
+        self.image.fill((180, 180, 255))
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y

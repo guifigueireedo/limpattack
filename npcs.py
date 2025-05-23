@@ -1,5 +1,5 @@
 npcs_data = {
-    "X": {
+    "A": {
         "nome": "Carlos",
         "status": {"importante": True},
         "dialogos": [
@@ -7,7 +7,7 @@ npcs_data = {
             "Os tomates do Will vão crescer mais rápido que isso!",
         ]
     },
-    "Y": {
+    "B": {
         "nome": "Will",
         "status": {"importante": False},
         "dialogos": [
@@ -15,7 +15,7 @@ npcs_data = {
             "Os tomates do Carlos vão crescer mais rápido que isso!",
         ]
     },
-    "3": {
+    "C": {
         "nome": "Piu",
         "status": {"importante": True},
         "dialogos_bloqueando": [
@@ -30,5 +30,14 @@ npcs_data = {
         "dialogos_livre": [
             "Olhinhos, olhinhos... Enxergo, enxergo... Piu!"
         ]
-    }
+    },
+    "D": {
+        "nome": "Rosa",
+        "status": {"importante": False},
+        "dialogos": [
+            "Oh, meu jardim! Finalmente terminei de plantar!",
+            "Estava com muita dor no pé por causa da bactéria do pé!",
+            "Mas passei Álcool, estou usando Talco e agora estou ótima!",
+        ]
+    },
 }

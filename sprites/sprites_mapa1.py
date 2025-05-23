@@ -8,14 +8,14 @@ import random
 tilemap = [
     'MTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT',
     'M.............................u.....,,Np',
-    'M.H..........o.....BH.........u.....,..t',
-    'M.......H.................H.......,,,..M',
+    'M.H..........o......H.........u.....,..t',
+    'M.......H.................H...u...,,,..M',
     'M.................................,....M',
     'M...............o.................,....M',
     'M.................................,....M',
     'M.................................,....M',
     'M..W.................W.........uuu3uuuuM',
-    'M....,.................,..........,....M',
+    'M....,...W.............,...W......,....M',
     'M....,.....,...........,.....,....,....M',
     'M....,.....,...........,.....,....,....M',
     'M....,.....,...........,.....,....,....M',
@@ -34,12 +34,11 @@ tilemap = [
     'M..jaaaiUj.ç.i.j...i.jaaai.j...i.......M',
     'M..JDDDI.JDDDI.JDDDI.JDDDI.JDDDI.......M',
     'M..LlllK.LlllK.LlllK.LlllK.LlllK.......M',
-    'M.......U..............................M',
+    'M................U.....................M',
     'MttttttttttttttttttttttttttttttttttttttM',
 ]
 
 def create_tiled_map(game, mapa_atual_index, mapas_visitados, fases, enemies, itens_cura):
-    # Persistência de estado do NPC3 e do sabonete
     if not hasattr(game, 'mapa1_state'):
         game.mapa1_state = {
             'npc3_estado': 'bloqueando',
@@ -126,18 +125,15 @@ def create_tiled_map(game, mapa_atual_index, mapas_visitados, fases, enemies, it
                     item_cura = random.choices(itens_cura, weights=[60, 30, 8, 2])[0]
                     ItemCuraSprite(game, j, i, item_cura)
             if column == "1":
-                NPC(game, j, i, symbol="X")
+                NPC(game, j, i, symbol="A")
             if column == "2":
-                NPC2(game, j, i, symbol="Y")
+                NPC2(game, j, i, symbol="B")
             if column == "3":
-                # Sempre coloca Ground2 embaixo do NPC3
                 Ground2(game, j, i)
-                # Posição padrão do NPC3
                 npc3_x, npc3_y = j, i
-                # Se já moveu, coloca na nova posição
                 if game.mapa1_state['npc3_moved'] and game.mapa1_state['npc3_pos']:
                     npc3_x, npc3_y = game.mapa1_state['npc3_pos']
-                npc3 = NPC3(game, npc3_x, npc3_y, symbol="3")
+                npc3 = NPC3(game, npc3_x, npc3_y, symbol="C")
                 npc3.estado = game.mapa1_state['npc3_estado']
                 npc3.moved = game.mapa1_state['npc3_moved']
                 if npc3.moved:
@@ -145,10 +141,8 @@ def create_tiled_map(game, mapa_atual_index, mapas_visitados, fases, enemies, it
                         npc3.remove(game.blocks)
                     except Exception:
                         pass
-                # Salva referência para persistência
                 game.npc3_ref = npc3
             if column == "B":
-                # Só cria o sabonete se não foi coletado
                 if not game.mapa1_state['sabonete_coletado'] and 'sabonete' not in getattr(game, 'inventario_chave', []):
                     Sabonete(game, j, i)
     mapas_visitados[mapa_atual_index] = True
@@ -533,29 +527,13 @@ class NPC3(pygame.sprite.Sprite):
         self.width = TILESIZE
         self.height = TILESIZE
         self.image = pygame.Surface((self.width, self.height))
-        self.image.fill((200, 200, 80))  # Unique color for NPC3
+        self.image.fill((200, 200, 80))
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
-        self.estado = 'bloqueando'  # 'bloqueando', 'livre'
+        self.estado = 'bloqueando'
         self.portal_pos = (x, y)
         self.moved = False
 
     def update(self):
-        pass  # Diálogo e movimento agora são tratados pelo Player
-
-class Sabonete(pygame.sprite.Sprite):
-    def __init__(self, game, x, y):
-        self.game = game
-        self._layer = BLOCK_LAYER
-        self.groups = self.game.all_sprites
-        pygame.sprite.Sprite.__init__(self, self.groups)
-        self.x = x * TILESIZE
-        self.y = y * TILESIZE
-        self.width = TILESIZE
-        self.height = TILESIZE
-        self.image = pygame.image.load("img/curativo.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (self.width, self.height))
-        self.rect = self.image.get_rect()
-        self.rect.x = self.x
-        self.rect.y = self.y
+        pass
